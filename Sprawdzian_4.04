@@ -1,0 +1,117 @@
+import random
+
+# Zadanie 1
+# Monte Carlo
+def monte_carlo_pi(n):
+    w_kole = 0
+    calkowita = 0
+    for _ in range(n):
+        x = random.uniform(0, 1)
+        y = random.uniform(0, 1)
+        odleglosc = x**2 + y**2
+        if odleglosc <= 1:
+            w_kole += 1
+        calkowita += 1
+    return 4 * w_kole / calkowita
+
+# Metoda Leibniza
+def leibniz_pi(n):
+    pi = 0
+    for i in range(n):
+        pi += (-1) ** i / (2 * i + 1)
+    return pi * 4
+
+# Zadanie 2
+def znajdz_podciagi(seq):
+    podciagi = []
+    for i in range(len(seq)):
+        for j in range(i + 1, len(seq) + 1):
+            podciag = seq[i:j]
+            if podciag not in podciagi:
+                podciagi.append(podciag)
+    return podciagi
+
+# Zadanie 4
+# Konwersja z zapisu
+def infix_na_postfix(wyrazenie):
+    precedencja = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+    stos = []
+    postfix = ''
+    for znak in wyrazenie:
+        if znak.isalnum():
+            postfix += znak
+        elif znak == '(':
+            stos.append(znak)
+        elif znak == ')':
+            while stos and stos[-1] != '(':
+                postfix += stos.pop()
+            stos.pop()
+        else:
+            while stos and precedencja.get(znak, 0) <= precedencja.get(stos[-1], 0):
+                postfix += stos.pop()
+            stos.append(znak)
+    while stos:
+        postfix += stos.pop()
+    return postfix
+
+# Obliczanie wyrażenia ONP
+def oblicz_postfix(wyrazenie):
+    stos = []
+    for znak in wyrazenie:
+        if znak.isdigit():
+            stos.append(int(znak))
+        else:
+            operand2 = stos.pop()
+            operand1 = stos.pop()
+            if znak == '+':
+                stos.append(operand1 + operand2)
+            elif znak == '-':
+                stos.append(operand1 - operand2)
+            elif znak == '*':
+                stos.append(operand1 * operand2)
+            elif znak == '/':
+                stos.append(operand1 / operand2)
+            elif znak == '^':
+                stos.append(operand1 ** operand2)
+    return stos[0]
+
+# Zadanie 5
+# Iteracyjne
+def iteracyjne_potegowanie(podstawa, wykladnik):
+    wynik = 1
+    while wykladnik > 0:
+        if wykladnik % 2 == 1:
+            wynik *= podstawa
+        podstawa *= podstawa
+        wykladnik //= 2
+    return wynik
+
+# Rekurencyjne
+def rekurencyjne_potegowanie(podstawa, wykladnik):
+    if wykladnik == 0:
+        return 1
+    elif wykladnik % 2 == 0:
+        return rekurencyjne_potegowanie(podstawa * podstawa, wykladnik // 2)
+    else:
+        return podstawa * rekurencyjne_potegowanie(podstawa * podstawa, (wykladnik - 1) // 2)
+
+
+if __name__ == "__main__":
+    n = int(input("Liczba prób dla metody Monte Carlo: "))
+    print("Liczba PI (Metoda Monte Carlo):", monte_carlo_pi(n))
+
+    n = int(input("Liczba iteracji dla metody Leibniza: "))
+    print("Liczba PI (Metoda Leibniza):", leibniz_pi(n))
+
+    seq = input("Podaj ciąg do znalezienia podciągów: ")
+    print("Podciągi:", znajdz_podciagi(seq))
+
+    infix_expr = input("Wyrażenie infiksowe dla ONP: ")
+    postfix_expr = infix_na_postfix(infix_expr)
+    print("Wyrażenie w ONP:", postfix_expr)
+    print("Wynik ONP:", oblicz_postfix(postfix_expr))
+
+    podstawa = int(input("Podstawa potęgowania: "))
+    wykladnik = int(input("Wykładnik potęgowania: "))
+    print("Wynik potęgowania (iteracyjnie):", iteracyjne_potegowanie(podstawa, wykladnik))
+    print("Wynik potęgowania (rekurencyjnie):", rekurencyjne_potegowanie(podstawa, wykladnik))
